@@ -14,7 +14,7 @@ declare module '@ioc:Adonis/Core/Drive' {
 
   interface DriversList {
     draco: {
-      config: DracoDriverConfig,
+      config: DracoDriverConfig
       implementation: DracoDriverContract
     }
   }

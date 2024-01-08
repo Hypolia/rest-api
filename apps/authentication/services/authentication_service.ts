@@ -12,7 +12,7 @@ class AuthenticationService {
     const user = await User.create({
       ...data,
       isAdmin: false,
-      hasAccessPanel: false
+      hasAccessPanel: false,
     })
 
     Logger.info(`A user has just been created: ${user.id} - ${user.name} `)

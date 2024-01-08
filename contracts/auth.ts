@@ -5,6 +5,7 @@
  * file.
  */
 
+import { JWTGuardContract, JWTGuardConfig, JWTClientContract } from '@ioc:Adonis/Auth/Keycloak'
 import User from 'Domains/users/models/user'
 
 declare module '@ioc:Adonis/Addons/Auth' {
@@ -68,6 +69,11 @@ declare module '@ioc:Adonis/Addons/Auth' {
       implementation: OATGuardContract<'user', 'api'>
       config: OATGuardConfig<'user'>
       client: OATClientContract<'user'>
+    }
+    jwt: {
+      implementation: JWTGuardContract<'user', 'jwt'>
+      config: JWTGuardConfig<'user'>
+      client: JWTClientContract<'user'>
     }
   }
 }

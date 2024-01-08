@@ -25,7 +25,8 @@
     "./services/architect/providers/architect_provider",
     "@adonisjs/lucid",
     "@adonisjs/auth",
-    "@adonisjs/drive-s3"
+    "@adonisjs/drive-s3",
+    "./apps/authentication/providers/keycloak_provider"
   ],
   "aceProviders": [
     "@adonisjs/repl"
