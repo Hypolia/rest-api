@@ -21,4 +21,9 @@ export default Env.rules({
   APP_NAME: Env.schema.string(),
   DRIVE_DISK: Env.schema.enum(['local', 's3'] as const),
   NODE_ENV: Env.schema.enum(['development', 'production', 'test'] as const),
+
+  KC_URL: Env.schema.string(),
+  KC_CLIENT_ID: Env.schema.string(),
+  KC_CLIENT_SECRET: Env.schema.string(),
+  KC_REALM: Env.schema.string(),
 })

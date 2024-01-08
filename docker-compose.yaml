@@ -1,18 +1,36 @@
 version: '3.8'
 
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin 
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: POSTGRES
+      DB_ADDR: "postgres_api"  # Remplacez par l'adresse IP ou le nom du serveur de votre instance PostgreSQL
+      DB_PORT: "5432"  # Port par défaut de PostgreSQL
+      DB_DATABASE: "keycloak"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+    command: 
+      - start-dev 
+    volumes:
+      - keycloak_data:/path/to/keycloak/data
   postgres:
-    container_name: postgres_adonis_services
+    container_name: postgres_api
     image: postgres:13
     volumes:
       - postgres_volume:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: backend
+      POSTGRES_DB: api,keycloak
     ports:
       - 5432:5432
   minio:
+    container_name: minio_hypolia
     image: minio/minio
     ports:
       - "9000:9000"
@@ -27,3 +45,4 @@ services:
 volumes:
   postgres_volume:
   minio_storage: {}
+  keycloak_data: {}

@@ -38,9 +38,10 @@ export class ArchitectManager implements ArchitectManagerContract {
 
     await Promise.all(
       Object.entries(architect.applications).map(async ([name, application]) => {
-        const { default: RouteHandler } = await import(this.application.makePath('apps', name, 'routes'))
+        const { default: RouteHandler } = await import(
+          this.application.makePath('apps', name, 'routes')
+        )
         const group = Route.group(RouteHandler)
-        console.log(application)
         group.namespace('apps/' + name + '/controllers')
 
         this.applyRouteParameter(group, application, 'prefix')
