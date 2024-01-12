@@ -11,5 +11,7 @@ export default () => {
     }).prefix('/files')
 
 
-  }).namespace('App/storage/controllers')
+  })
+    .namespace('App/storage/controllers')
+    .middleware('auth:jwt')
 }

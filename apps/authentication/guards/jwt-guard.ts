@@ -1,7 +1,7 @@
 import Keycloak, { JWTCustomPayloadData, JWTGuardContract } from '@ioc:Adonis/Auth/Keycloak'
 import { type HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import JwtAuthenticationException from '../exceptions/jwt-authentication-exception'
 import jwt from 'jsonwebtoken'
+import { AuthenticationException } from '@adonisjs/auth/build/standalone'
 
 export class JWTGuard implements JWTGuardContract<any, any> {
   public name: any
@@ -48,7 +48,9 @@ export class JWTGuard implements JWTGuardContract<any, any> {
   public async check(): Promise<boolean> {
     try {
       await this.authenticate()
-    } catch (error) {}
+    } catch (error) {
+      throw error
+    }
 
     return this.isAuthenticated
   }
@@ -81,12 +83,12 @@ export class JWTGuard implements JWTGuardContract<any, any> {
   private getBearerToken(): string {
     const token = this.ctx.request.header('Authorization')
     if (!token) {
-      throw new JwtAuthenticationException('No Authorization header passed')
+      throw AuthenticationException.invalidToken(this.name)
     }
 
     const [type, value] = token.split(' ')
     if (!type || type.toLowerCase() !== 'bearer' || !value) {
-      throw new JwtAuthenticationException('Invalid Authorization header value: ' + token)
+      throw AuthenticationException.invalidToken(this.name)
     }
 
     return value

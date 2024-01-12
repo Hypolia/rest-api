@@ -13,8 +13,12 @@ const architectConfig: ArchitectConfig = {
     },
     storage: {
       prefix: 'storage',
-      as: 'storage'
-    }
+      as: 'storage',
+    },
+    cluster: {
+      prefix: 'cluster',
+      as: 'cluster',
+    },
   },
 }
 

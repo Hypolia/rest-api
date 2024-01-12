@@ -26,7 +26,8 @@
     "@adonisjs/lucid",
     "@adonisjs/auth",
     "@adonisjs/drive-s3",
-    "./apps/authentication/providers/keycloak_provider"
+    "./apps/authentication/providers/keycloak_provider",
+    "adonis-rabbit"
   ],
   "aceProviders": [
     "@adonisjs/repl"

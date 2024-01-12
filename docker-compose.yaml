@@ -41,6 +41,15 @@ services:
       MINIO_ROOT_USER: root
       MINIO_ROOT_PASSWORD: rootpassword
     command: server --console-address ":9001" /data
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
 volumes:
   postgres_volume:
