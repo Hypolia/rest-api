@@ -1,19 +1,27 @@
-import Keycloak, { JWTCustomPayloadData, JWTGuardContract } from '@ioc:Adonis/Auth/Keycloak'
+import Keycloak, { JWTCustomPayloadData, JWTGuardConfig, JWTGuardContract } from "@ioc:Adonis/Auth/Keycloak";
 import { type HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import jwt from 'jsonwebtoken'
 import { AuthenticationException } from '@adonisjs/auth/build/standalone'
+import { BaseGuard } from '@adonisjs/auth/build/src/Guards/Base'
+import { EmitterContract } from '@ioc:Adonis/Core/Event'
 
-export class JWTGuard implements JWTGuardContract<any, any> {
+export class JWTGuard extends BaseGuard<any> implements JWTGuardContract<any, any> {
   public name: any
-  public config: any
   public user?: any
   public isLoggedOut: boolean
-  public isGuest: boolean
-  public isLoggedIn: boolean
   public provider: any
   public payload?: JWTCustomPayloadData
 
-  constructor(private ctx: HttpContextContract) {}
+  constructor(
+    _name: string,
+    public config: JWTGuardConfig<any>,
+    private emitter: EmitterContract,
+    provider: any,
+    private ctx: HttpContextContract,
+
+  ) {
+    super('jwt', config, provider)
+  }
 
   public verifyCredentials(uid: string, password: string): Promise<any> {
     console.log(uid, password)
@@ -42,50 +50,58 @@ export class JWTGuard implements JWTGuardContract<any, any> {
   public toJSON() {
     throw new Error('Method not implemented.')
   }
-  public isAuthenticated = true
+  public isAuthenticated = false
   public authenticationAttempted = false
 
   public async check(): Promise<boolean> {
     try {
       await this.authenticate()
     } catch (error) {
-      throw error
+      if (!(error instanceof AuthenticationException)) {
+        throw error
+      }
+
+      this.ctx.logger.trace(error, 'Authentication failure')
     }
 
     return this.isAuthenticated
   }
 
   public async authenticate(): Promise<any> {
-    if (this.authenticationAttempted) {
-      return this.user
-    }
-
-    //this.authenticationAttempted = true
-
     const token = this.getBearerToken()
-    const paylaod = await this.verifyToken(token)
-
-    this.payload = paylaod as any
+    const payload = await this.verifyToken(token)
+    this.markUserAsLoggedIn(payload, true)
+    await this.emitter.emit('adonis:jwt:authenticate', {
+      name: this.name,
+      ctx: this.ctx,
+      user: payload,
+      token,
+    })
+    this.payload = payload as any
   }
 
   private async verifyToken(token: string) {
-    const key = await Keycloak.getPublicCert()
-    const publicKey = `-----BEGIN CERTIFICATE-----\n${key}\n-----END CERTIFICATE-----`
+    try {
+      const key = await Keycloak.getPublicCert()
+      const publicKey = `-----BEGIN CERTIFICATE-----\n${key}\n-----END CERTIFICATE-----`
 
-    const decodedToken = jwt.decode(token, { complete: true })
+      const decodedToken = jwt.decode(token, { complete: true })
 
-    const algorithm = decodedToken?.header.alg as jwt.Algorithm
+      const algorithm = decodedToken?.header.alg as jwt.Algorithm
 
-    const verifiedToken = jwt.verify(token, publicKey, { algorithms: [algorithm] })
-    return verifiedToken
+      const verifiedToken = jwt.verify(token, publicKey, { algorithms: [algorithm] })
+      return verifiedToken
+    } catch (e) {
+      throw AuthenticationException.invalidToken(this.name)
+    }
   }
 
   private getBearerToken(): string {
     const token = this.ctx.request.header('Authorization')
+
     if (!token) {
       throw AuthenticationException.invalidToken(this.name)
     }
-
     const [type, value] = token.split(' ')
     if (!type || type.toLowerCase() !== 'bearer' || !value) {
       throw AuthenticationException.invalidToken(this.name)

@@ -11,13 +11,13 @@ export default class User extends BaseModel {
   public email: string
 
   @column()
-  public name: string
+  public firstname: string
 
   @column()
   public lastname: string
 
-  @column({ serializeAs: null })
-  public password: string
+  @column()
+  public oidcId: string
 
   @column()
   public isAdmin: boolean
@@ -30,6 +30,8 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
+
+
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime

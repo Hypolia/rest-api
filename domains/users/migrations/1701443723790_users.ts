@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id').primary()
       table.string('email', 255).notNullable().unique()
-      table.string('name')
+      table.string('firstname')
       table.string('lastname')
       table.boolean('is_admin').defaultTo(false)
       table.boolean('has_access_panel').defaultTo(false)

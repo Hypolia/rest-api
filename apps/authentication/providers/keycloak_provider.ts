@@ -9,12 +9,13 @@ export default class KeycloakProvider {
       return new KeycloakService(this.app)
     })
 
+    const Event = this.app.container.resolveBinding('Adonis/Core/Event');
     const Auth = this.app.container.resolveBinding('Adonis/Addons/Auth')
 
     const { JWTGuard } = await import('../guards/jwt-guard')
 
-    Auth.extend('guard', 'jwt', (_auth, _mapping, _config, _provider, ctx) => {
-      return new JWTGuard(ctx)
+    Auth.extend('guard', 'jwt', (_auth, _mapping, config, provider, ctx) => {
+      return new JWTGuard(_mapping, config, Event, provider, ctx)
     })
   }
 

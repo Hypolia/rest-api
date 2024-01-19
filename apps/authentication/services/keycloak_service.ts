@@ -65,8 +65,25 @@ export default class KeycloakService implements KeycloakServiceContract {
 
   public async createUser(user: CreateUserRequest): Promise<string> {
     console.log(user)
+    const url = `${this.config.url}/admin/realms/${this.config.realm}/users`
+    try {
+      const token = await this.getAdminToken()
 
-    return 'Hello'
+      const response = await axios.post(url, user, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const locationHeader = response.headers['location']
+
+
+      return locationHeader.split('/').pop()
+    } catch (err) {
+      console.log(err);
+    }
+
   }
 
   private async getAdminToken(): Promise<string> {
@@ -107,14 +124,13 @@ export default class KeycloakService implements KeycloakServiceContract {
   public async loginWithPassword(username: string, password: string) {
     Logger.info(`User login test: ${username} : ${password}`)
 
-
     try {
       const resp = await axios.post(
-        'http://localhost:8080/realms/hypolia/protocol/openid-connect/token',
+        `${this.config.url}/realms/${this.config.realm}/protocol/openid-connect/token`,
         {
           grant_type: 'password',
-          client_id: 'service',
-          client_secret: 'ppGHPl3gXUl34hfrQAkJOnGKAItvBkFJ',
+          client_id: this.config.admin.clientId,
+          client_secret: this.config.admin.clientSecret,
           password: password,
           username: username,
         },

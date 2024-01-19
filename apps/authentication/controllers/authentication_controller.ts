@@ -2,7 +2,9 @@ import { type HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { CreateUserValidator } from 'App/authentication/validators/authentication_validator'
 import AuthenticationService from 'App/authentication/services/authentication_service'
 import Keycloak from '@ioc:Adonis/Auth/Keycloak'
+import { inject } from '@adonisjs/fold'
 
+@inject()
 export default class AuthenticationController {
   private authenticationService = AuthenticationService
 
@@ -21,7 +23,6 @@ export default class AuthenticationController {
   //     return response.unauthorized('Invalid credentials')
   //   }
   // }
-
   public async login({ request, response }: HttpContextContract) {
     const username = request.input('username')
     const password = request.input('password')

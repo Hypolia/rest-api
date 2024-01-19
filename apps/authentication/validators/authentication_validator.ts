@@ -5,13 +5,13 @@ export class CreateUserValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    email: schema.string({ trim: true, escape: true }, [
+    email: schema.string({ trim: true }, [
       rules.email(),
-      rules.unique({ table: 'users', column: 'email' })
+      rules.unique({ table: 'users', column: 'email' }),
     ]),
-    name: schema.string({ trim: true, escape: true }),
+    firstname: schema.string({ trim: true, escape: true }),
     lastname: schema.string({ trim: true, escape: true }),
-    password: schema.string({ trim: true, escape: true })
+    password: schema.string({ trim: true, escape: true }),
   })
 
   public messages: CustomMessages = {}
