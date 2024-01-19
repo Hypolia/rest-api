@@ -1,20 +1,28 @@
 import { DracoDriverContract } from '@ioc:Adonis/Addons/DracoDrive'
-import {ContentHeaders, DriveFileStats,
+import {
+  ContentHeaders,
+  DriveFileStats,
   S3DriverConfig,
   Visibility,
-  WriteOptions
-} from "@ioc:Adonis/Core/Drive"
+  WriteOptions,
+} from '@ioc:Adonis/Core/Drive'
 import { format } from 'url'
 import { Readable } from 'stream'
 import getStream from 'get-stream'
 import { string } from '@poppinss/utils/build/helpers'
 import {
-  _Object, CopyObjectCommand, DeleteObjectCommand, GetObjectAclCommand,
+  _Object,
+  CopyObjectCommand,
+  DeleteObjectCommand,
+  GetObjectAclCommand,
   GetObjectCommand,
-  GetObjectCommandInput, HeadObjectCommand,
-  ListObjectsV2Command, PutObjectAclCommand, PutObjectCommand,
+  GetObjectCommandInput,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+  PutObjectAclCommand,
+  PutObjectCommand,
   S3Client,
-  Tag
+  Tag,
 } from '@aws-sdk/client-s3'
 
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
@@ -28,7 +36,7 @@ import {
   CannotGetMetaDataException,
   CannotSetVisibilityException,
 } from '@adonisjs/core/build/standalone'
-import {Upload} from '@aws-sdk/lib-storage'
+import { Upload } from '@aws-sdk/lib-storage'
 
 export class DracoDriver implements DracoDriverContract {
   public adapter: S3Client
@@ -39,7 +47,7 @@ export class DracoDriver implements DracoDriverContract {
     if (this.config.key && this.config.secret) {
       this.config.credentials = {
         accessKeyId: this.config.key,
-        secretAccessKey: this.config.secret
+        secretAccessKey: this.config.secret,
       }
     }
 
@@ -49,7 +57,7 @@ export class DracoDriver implements DracoDriverContract {
   public async getFilesWithPrefix(prefix: string, bucketName: string): Promise<_Object[]> {
     const command = new ListObjectsV2Command({
       Bucket: bucketName,
-      Prefix: prefix
+      Prefix: prefix,
     })
 
     try {
@@ -60,7 +68,7 @@ export class DracoDriver implements DracoDriverContract {
       }
 
       const files: _Object[] = response.Contents.map((file: _Object) => ({
-        ...file
+        ...file,
       }))
 
       return files
@@ -120,7 +128,7 @@ export class DracoDriver implements DracoDriverContract {
   private transformContentHeaders(options?: ContentHeaders) {
     const contentHeaders: Omit<GetObjectCommandInput, 'Key' | 'Bucket'> = {}
     const { contentType, contentDisposition, contentEncoding, contentLanguage, cacheControl } =
-    options || {}
+      options || {}
 
     if (contentType) {
       contentHeaders['ResponseContentType'] = contentType
@@ -449,5 +457,4 @@ export class DracoDriver implements DracoDriverContract {
       throw CannotMoveFileException.invoke(source, destination, error.original || error)
     }
   }
-
 }
