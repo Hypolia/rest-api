@@ -53,7 +53,7 @@ $ cp .env.example .env
 ## Roadmap
 
 - [x] HealthCheck
-- [ ] Support JWT
+- [x] Support JWT
 - [x] Architect Service
 - [x] Authentication with OAT
 - [ ] FileManager
