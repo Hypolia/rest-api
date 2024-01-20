@@ -63,8 +63,7 @@ export default class KeycloakService implements KeycloakServiceContract {
     return this.publicCert
   }
 
-  public async createUser(user: CreateUserRequest): Promise<string> {
-    console.log(user)
+  public async createUser(user: CreateUserRequest): Promise<string | undefined> {
     const url = `${this.config.url}/admin/realms/${this.config.realm}/users`
     try {
       const token = await this.getAdminToken()
@@ -78,12 +77,11 @@ export default class KeycloakService implements KeycloakServiceContract {
 
       const locationHeader = response.headers['location']
 
-
       return locationHeader.split('/').pop()
     } catch (err) {
-      console.log(err);
+      console.log(err)
+      return
     }
-
   }
 
   private async getAdminToken(): Promise<string> {

@@ -32,7 +32,7 @@ declare module '@ioc:Adonis/Auth/Keycloak' {
 
   export interface KeycloakServiceContract {
     getPublicCert(): Promise<string>
-    createUser(user: CreateUserRequest): Promise<string>
+    createUser(user: CreateUserRequest): Promise<string | undefined>
     deleteUser(userId: string): Promise<void>
     loginWithPassword(username: string, password: string)
   }
